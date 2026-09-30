@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Slots Casino</title>
+    <title>Neon Slots — Ставь что угодно</title>
     <style>
         :root {
             --bg-color: #0f0c1b;
@@ -45,33 +45,11 @@
 
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #fff;
             text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
-        }
-
-        .balance-card {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-        }
-
-        .balance-label {
-            font-size: 0.9rem;
-            color: #aaa;
-            text-transform: uppercase;
-        }
-
-        .balance-amount {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-            margin-top: 5px;
         }
 
         .slots-display {
@@ -118,36 +96,31 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 5px;
+            gap: 8px;
         }
 
         .input-group label {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #bbb;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .bet-input-wrapper {
-            display: flex;
+        input[type="text"] {
             width: 100%;
-            gap: 10px;
-        }
-
-        input[type="number"] {
-            flex: 1;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(0, 240, 255, 0.4);
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
 
-        input[type="number"]:focus {
+        input[type="text"]:focus {
             border-color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
         }
 
         .spin-btn {
@@ -163,6 +136,7 @@
             letter-spacing: 1px;
             box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);
             transition: all 0.2s;
+            margin-top: 10px;
         }
 
         .spin-btn:hover {
@@ -182,10 +156,14 @@
         }
 
         .message {
-            margin-top: 20px;
-            font-size: 1.1rem;
-            min-height: 27px;
+            margin-top: 25px;
+            font-size: 1.2rem;
+            min-height: 50px;
             font-weight: 500;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .win {
@@ -203,11 +181,6 @@
 
     <div class="casino-container">
         <h1>SLOTS</h1>
-        
-        <div class="balance-card">
-            <div class="balance-label">Ваш баланс</div>
-            <div class="balance-amount"><span id="balance">1000</span> монет</div>
-        </div>
 
         <div class="slots-display">
             <div class="reel" id="reel1">🍒</div>
@@ -217,22 +190,18 @@
 
         <div class="controls">
             <div class="input-group">
-                <label for="bet-input">Размер ставки</label>
-                <div class="bet-input-wrapper">
-                    <input type="number" id="bet-input" value="10" min="1" placeholder="Введите ставку">
-                </div>
+                <label for="bet-input">Что вы ставите на кон?</label>
+                <input type="text" id="bet-input" placeholder="Например: мыть посуду неделю" maxlength="50">
             </div>
-            <button class="spin-btn" id="spin-button" onclick="spin()">Крутить!</button>
+            <button class="spin-btn" id="spin-button" onclick="spin()">Испытать удачу</button>
         </div>
 
-        <div class="message" id="message">Укажите ставку и нажмите кнопку</div>
+        <div class="message" id="message">Напишите свою ставку и крутите барабан!</div>
     </div>
 
     <script>
-        let balance = 1000;
         const symbols = ['🍒', '🍋', '🍇', '💎', '7️⃣'];
         
-        const balanceEl = document.getElementById('balance');
         const betInput = document.getElementById('bet-input');
         const spinButton = document.getElementById('spin-button');
         const messageEl = document.getElementById('message');
@@ -244,77 +213,64 @@
         ];
 
         function spin() {
-            const bet = parseInt(betInput.value);
+            const betValue = betInput.value.trim();
 
-            // Проверки корректности ставки
-            if (isNaN(bet) || bet <= 0) {
-                showMessage('Пожалуйста, укажите корректную сумму ставки!', 'lose');
+            // Проверка: введено ли что-то в поле ставки
+            if (betValue === "") {
+                showMessage('Вы не можете крутить вхолостую! Напишите, что вы ставите.', 'lose');
                 return;
             }
 
-            if (bet > balance) {
-                showMessage('Недостаточно средств на балансе!', 'lose');
-                return;
-            }
-
-            // Списываем ставку и блокируем управление
-            balance -= bet;
-            updateBalance();
+            // Блокируем интерфейс на время анимации
             spinButton.disabled = true;
             betInput.disabled = true;
-            showMessage('Слоты крутятся...', '');
+            showMessage('Барабаны крутятся, судьба решается...', '');
 
-            // Запускаем визуальную анимацию вращения
+            // Запускаем эффект кручения
             reels.forEach(reel => reel.classList.add('spinning'));
 
-            // Имитируем задержку ответа от "сервера" слотов
             setTimeout(() => {
                 const results = [];
                 
-                // Генерируем случайные символы для каждого барабана
-                reels.forEach((reel, index) => {
+                // Останавливаем барабаны и генерируем случайные эмодзи
+                reels.forEach((reel) => {
                     reel.classList.remove('spinning');
                     const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
                     reel.innerText = randomSymbol;
                     results.push(randomSymbol);
                 });
 
-                // Проверяем условия выигрыша
-                if (results[0] === results[1] && results[1] === results[2]) {
-                    // Три одинаковых символа
-                    let multiplier = 5;
-                    if (results[0] === '💎') multiplier = 10;
-                    if (results[0] === '7️⃣') multiplier = 20;
-                    
-                    const winAmount = bet * multiplier;
-                    balance += winAmount;
-                    showMessage(`ВЫИГРЫШ! Три в ряд: +${winAmount} монет!`, 'win');
-                } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[3]) {
-                    // Два одинаковых символа
-                    const winAmount = Math.floor(bet * 1.5);
-                    balance += winAmount;
-                    showMessage(`Небольшой выигрыш! Два совпадения: +${winAmount} монет.`, 'win');
+                // Логика победы/проигрыша
+                const isJackpot = results[0] === results[1] && results[1] === results[2];
+                const isPair = results[0] === results[1] || results[1] === results[2] || opacityMatch(results);
+
+                if (isJackpot) {
+                    // 3 в ряд
+                    showMessage(`🎉 ДЖЕКПОТ! Вы сохранили всё и выиграли х3 к ставке [${betValue}]!`, 'win');
+                } else if (isPair) {
+                    // 2 совпадения
+                    showMessage(` Удача на вашей стороне! Ставка [${betValue}] спасена!`, 'win');
                 } else {
                     // Нет совпадений
-                    showMessage(`Вы проиграли ${bet} монет. Попробуйте еще раз!`, 'lose');
+                    showMessage(`😢 Проигрыш! Вы потеряли: «${betValue}». Придется выполнять!`, 'lose');
                 }
 
-                // Возвращаем доступ к кнопкам
-                updateBalance();
+                // Разблокируем интерфейс
                 spinButton.disabled = false;
                 betInput.disabled = false;
 
-            }, 1200); // Время вращения барабанов в миллисекундах
+            }, 1200);
         }
 
-        function updateBalance() {
-            balanceEl.innerText = balance;
+        // Вспомогательная проверка для крайних барабанов (1 и 3)
+        function opacityMatch(arr) {
+            return arr[0] === arr[2];
         }
 
         function showMessage(text, className) {
             messageEl.innerText = text;
             messageEl.className = 'message ' + className;
         }
-    </script>
+    </style>
 </body>
-  </html>
+</html>
