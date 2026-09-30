@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Slots Casino</title>
+    <style>
+        :root {
+            --bg-color: #0f0c1b;
+            --panel-color: #1d1836;
+            --accent-color: #ff007f;
+            --neon-blue: #00f0ff;
+            --text-color: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #251c4a 0%, #0f0c1b 100%);
+            overflow: hidden;
+        }
+
+        .casino-container {
+            background: var(--panel-color);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1), inset 0 0 15px rgba(255, 0, 127, 0.2);
+            border: 2px solid rgba(255, 0, 127, 0.3);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+        }
+
+        .balance-card {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .balance-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        .balance-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        .slots-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 0, 127, 0.2);
+        }
+
+        .reel {
+            width: 90px;
+            height: 90px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px rgba(0, 240, 255, 0.2);
+            transition: transform 0.1s ease;
+        }
+
+        .spinning {
+            animation: blurSpin 0.1s infinite linear;
+        }
+
+        @keyframes blurSpin {
+            0% { filter: blur(3px); transform: translateY(-5px); }
+            50% { filter: blur(6px); transform: translateY(5px); }
+            100% { filter: blur(3px); transform: translateY(-5px); }
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            color: #bbb;
+            text-transform: uppercase;
+        }
+
+        .bet-input-wrapper {
+            display: flex;
+            width: 100%;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            padding: 12px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.2rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .spin-btn {
+            background: linear-gradient(45deg, var(--accent-color), #ff0055);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);
+            transition: all 0.2s;
+        }
+
+        .spin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 127, 0.6);
+        }
+
+        .spin-btn:active {
+            transform: translateY(1px);
+        }
+
+        .spin-btn:disabled {
+            background: #444;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            min-height: 27px;
+            font-weight: 500;
+        }
+
+        .win {
+            color: #00ff66;
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+        }
+
+        .lose {
+            color: #ff3333;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="casino-container">
+        <h1>SLOTS</h1>
+        
+        <div class="balance-card">
+            <div class="balance-label">Ваш баланс</div>
+            <div class="balance-amount"><span id="balance">1000</span> монет</div>
+        </div>
+
+        <div class="slots-display">
+            <div class="reel" id="reel1">🍒</div>
+            <div class="reel" id="reel2">🍋</div>
+            <div class="reel" id="reel3">🍇</div>
+        </div>
+
+        <div class="controls">
+            <div class="input-group">
+                <label for="bet-input">Размер ставки</label>
+                <div class="bet-input-wrapper">
+                    <input type="number" id="bet-input" value="10" min="1" placeholder="Введите ставку">
+                </div>
+            </div>
+            <button class="spin-btn" id="spin-button" onclick="spin()">Крутить!</button>
+        </div>
+
+        <div class="message" id="message">Укажите ставку и нажмите кнопку</div>
+    </div>
+
+    <script>
+        let balance = 1000;
+        const symbols = ['🍒', '🍋', '🍇', '💎', '7️⃣'];
+        
+        const balanceEl = document.getElementById('balance');
+        const betInput = document.getElementById('bet-input');
+        const spinButton = document.getElementById('spin-button');
+        const messageEl = document.getElementById('message');
+        
+        const reels = [
+            document.getElementById('reel1'),
+            document.getElementById('reel2'),
+            document.getElementById('reel3')
+        ];
+
+        function spin() {
+            const bet = parseInt(betInput.value);
+
+            // Проверки корректности ставки
+            if (isNaN(bet) || bet <= 0) {
+                showMessage('Пожалуйста, укажите корректную сумму ставки!', 'lose');
+                return;
+            }
+
+            if (bet > balance) {
+                showMessage('Недостаточно средств на балансе!', 'lose');
+                return;
+            }
+
+            // Списываем ставку и блокируем управление
+            balance -= bet;
+            updateBalance();
+            spinButton.disabled = true;
+            betInput.disabled = true;
+            showMessage('Слоты крутятся...', '');
+
+            // Запускаем визуальную анимацию вращения
+            reels.forEach(reel => reel.classList.add('spinning'));
+
+            // Имитируем задержку ответа от "сервера" слотов
+            setTimeout(() => {
+                const results = [];
+                
+                // Генерируем случайные символы для каждого барабана
+                reels.forEach((reel, index) => {
+                    reel.classList.remove('spinning');
+                    const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                    reel.innerText = randomSymbol;
+                    results.push(randomSymbol);
+                });
+
+                // Проверяем условия выигрыша
+                if (results[0] === results[1] && results[1] === results[2]) {
+                    // Три одинаковых символа
+                    let multiplier = 5;
+                    if (results[0] === '💎') multiplier = 10;
+                    if (results[0] === '7️⃣') multiplier = 20;
+                    
+                    const winAmount = bet * multiplier;
+                    balance += winAmount;
+                    showMessage(`ВЫИГРЫШ! Три в ряд: +${winAmount} монет!`, 'win');
+                } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[3]) {
+                    // Два одинаковых символа
+                    const winAmount = Math.floor(bet * 1.5);
+                    balance += winAmount;
+                    showMessage(`Небольшой выигрыш! Два совпадения: +${winAmount} монет.`, 'win');
+                } else {
+                    // Нет совпадений
+                    showMessage(`Вы проиграли ${bet} монет. Попробуйте еще раз!`, 'lose');
+                }
+
+                // Возвращаем доступ к кнопкам
+                updateBalance();
+                spinButton.disabled = false;
+                betInput.disabled = false;
+
+            }, 1200); // Время вращения барабанов в миллисекундах
+        }
+
+        function updateBalance() {
+            balanceEl.innerText = balance;
+        }
+
+        function showMessage(text, className) {
+            messageEl.innerText = text;
+            messageEl.className = 'message ' + className;
+        }
+    </script>
+</body>
+</html>
